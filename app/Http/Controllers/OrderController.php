@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Customer;
 
 class OrderController extends Controller
 {
@@ -15,7 +16,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('product', 'user')->latest()->get();
+        $orders = Order::with('product', 'user', 'customer')->latest()->get();
         return view('orders.index', compact('orders'));
     }
 
@@ -25,7 +26,9 @@ class OrderController extends Controller
     public function create()
     {
         $products = Product::all();
-        return view('orders.create', compact('products'));
+        $customers = Customer::all();
+
+        return view('orders.create', compact('products', 'customers'));
     }
 
     /**
@@ -33,17 +36,26 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-        'customer_name' => 'required|string|max:255',
-        'platform' => 'required|in:Shopee,Tokopedia,Offline,Website',
-        'product_id' => 'required|exists:products,id',
-        'quantity' => 'required|integer|min:1',
-        'total_paid' => 'required|numeric|min:0',
-    ]);
+        $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'product_id'  => 'required|exists:products,id',
+            'quantity'    => 'required|integer|min:1',
+            'platform'    => 'required|string',
+        ]);
 
-        $validated['user_id'] = auth()->id();
+        $product = Product::findOrFail($request->product_id);
+        $totalPaid = $product->price * $request->quantity;
 
-        Order::create($validated);
+        $customer = Customer::findOrFail($request->customer_id);
+
+        Order::create([
+            'customer_id'   => $customer->id,
+            'platform'      => $request->platform,
+            'product_id'    => $request->product_id,
+            'quantity'      => $request->quantity,
+            'user_id'       => auth()->id(),
+            'total_paid'    => $totalPaid,
+        ]);
 
         return redirect()->route('orders.index')->with('success', 'Pesanan berhasil ditambahkan');
     }
@@ -63,8 +75,9 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
         $products = Product::all();
+        $customers = Customer::all();
 
-        return view('orders.edit', compact('order', 'products'));
+        return view('orders.edit', compact('order', 'products', 'customers'));
     }
 
     /**
@@ -73,19 +86,25 @@ class OrderController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
+            'product_id'   => 'required|exists:products,id',
+            'quantity'     => 'required|integer|min:1',
+            'customer_id'  => 'required|exists:customers,id',
+            'platform'     => 'required|string',
         ]);
 
         $order = Order::findOrFail($id);
+        $product = Product::findOrFail($request->product_id);
+        $totalPaid = $product->price * $request->quantity;
 
         $order->update([
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
+            'product_id'   => $request->product_id,
+            'quantity'     => $request->quantity,
+            'customer_id'  => $request->customer_id,
+            'total_paid'   => $totalPaid,
+            'platform'     => $request->platform,
         ]);
 
         return redirect()->route('orders.index')->with('success', 'Pesanan berhasil diperbarui.');
-
     }
 
     /**

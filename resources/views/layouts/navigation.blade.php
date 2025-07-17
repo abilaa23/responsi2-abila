@@ -16,12 +16,16 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <!-- Tambahan Link Produk dan Order -->
                     <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
                         {{ __('Produk') }}
                     </x-nav-link>
+
                     <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
                         {{ __('Order') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
+                        {{ __('Customer') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -41,7 +45,6 @@
                     </x-slot>
 
                     <x-slot name="content">
-
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -78,12 +81,16 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            <!-- Responsive Produk dan Order -->
             <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
                 {{ __('Produk') }}
             </x-responsive-nav-link>
+
             <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
                 {{ __('Order') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
+                {{ __('Customer') }}
             </x-responsive-nav-link>
         </div>
 

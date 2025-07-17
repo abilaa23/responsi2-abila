@@ -6,16 +6,25 @@
             @csrf
             @method('PUT')
 
+            {{-- Nama Pelanggan --}}
             <div>
-                <label for="customer_name" class="block text-sm font-medium text-gray-700">Nama Pelanggan</label>
-                <input type="text" name="customer_name" id="customer_name"
-                    class="w-full px-4 py-2 border rounded-md @error('customer_name') border-red-500 @enderror"
-                    value="{{ old('customer_name', $order->customer_name) }}">
-                @error('customer_name')
-                    <p class="text-sm text-red-500 mt-1">Nama pelanggan wajib diisi.</p>
+                <label for="customer_id" class="block text-sm font-medium text-gray-700">Nama Pelanggan</label>
+                <select name="customer_id" id="customer_id"
+                    class="w-full px-4 py-2 border rounded-md @error('customer_id') border-red-500 @enderror">
+                    <option value="">-- Pilih Pelanggan --</option>
+                    @foreach ($customers as $customer)
+                        <option value="{{ $customer->id }}"
+                            {{ old('customer_id', $order->customer_id) == $customer->id ? 'selected' : '' }}>
+                            {{ $customer->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('customer_id')
+                    <p class="text-sm text-red-500 mt-1">Silakan pilih pelanggan.</p>
                 @enderror
             </div>
 
+            {{-- Platform --}}
             <div>
                 <label for="platform" class="block text-sm font-medium text-gray-700">Platform</label>
                 <select name="platform" id="platform"
@@ -31,6 +40,7 @@
                 @enderror
             </div>
 
+            {{-- Produk --}}
             <div>
                 <label for="product_id" class="block text-sm font-medium text-gray-700">Produk</label>
                 <select name="product_id" id="product_id"
@@ -47,6 +57,7 @@
                 @enderror
             </div>
 
+            {{-- Jumlah --}}
             <div>
                 <label for="quantity" class="block text-sm font-medium text-gray-700">Jumlah</label>
                 <input type="number" name="quantity" id="quantity" min="1"
@@ -57,6 +68,7 @@
                 @enderror
             </div>
 
+            {{-- Total Dibayar --}}
             <div>
                 <label for="total_paid" class="block text-sm font-medium text-gray-700">Total Dibayar (Rp)</label>
                 <input type="number" step="0.01" name="total_paid" id="total_paid"
@@ -68,8 +80,7 @@
             </div>
 
             <div class="flex justify-between">
-                <a href="{{ route('orders.index') }}"
-                    class="text-gray-600 hover:underline text-sm mt-2">← Kembali</a>
+                <a href="{{ route('orders.index') }}" class="text-gray-600 hover:underline text-sm mt-2">← Kembali</a>
 
                 <button type="submit"
                     class="bg-lilac-600 hover:bg-lilac-700 text-white font-semibold px-6 py-2 rounded-md">

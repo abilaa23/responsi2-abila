@@ -6,12 +6,18 @@
             @csrf
 
             <div>
-                <label for="customer_name" class="block text-sm font-medium text-gray-700">Nama Pelanggan</label>
-                <input type="text" name="customer_name" id="customer_name"
-                    class="w-full px-4 py-2 border rounded-md @error('customer_name') border-red-500 @enderror"
-                    value="{{ old('customer_name') }}">
-                @error('customer_name')
-                    <p class="text-sm text-red-500 mt-1">Nama pelanggan wajib diisi.</p>
+                <label for="customer_id" class="block text-sm font-medium text-gray-700">Nama Pelanggan</label>
+                <select name="customer_id" id="customer_id"
+                    class="w-full px-4 py-2 border rounded-md @error('customer_id') border-red-500 @enderror">
+                    <option value="">-- Pilih Pelanggan --</option>
+                    @foreach ($customers as $customer)
+                        <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                            {{ $customer->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('customer_id')
+                    <p class="text-sm text-red-500 mt-1">Nama pelanggan wajib dipilih.</p>
                 @enderror
             </div>
 
@@ -53,16 +59,6 @@
                     value="{{ old('quantity') }}">
                 @error('quantity')
                     <p class="text-sm text-red-500 mt-1">Jumlah minimal 1.</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="total_paid" class="block text-sm font-medium text-gray-700">Total Dibayar (Rp)</label>
-                <input type="number" name="total_paid" id="total_paid" step="0.01"
-                    class="w-full px-4 py-2 border rounded-md @error('total_paid') border-red-500 @enderror"
-                    value="{{ old('total_paid') }}">
-                @error('total_paid')
-                    <p class="text-sm text-red-500 mt-1">Total pembayaran harus diisi dan bernilai valid.</p>
                 @enderror
             </div>
 

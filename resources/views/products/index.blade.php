@@ -26,24 +26,32 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                @foreach ($products as $product)
+                @if ($products->count())
+                    @foreach ($products as $product)
+                        <tr>
+                            <td class="px-4 py-2">{{ $product->name }}</td>
+                            <td class="px-4 py-2">{{ $product->description ?? '-' }}</td>
+                            <td class="px-4 py-2">{{ $product->stock }}</td>
+                            <td class="px-4 py-2">Rp{{ number_format($product->price, 0, ',', '.') }}</td>
+                            <td class="px-4 py-2">
+                                <a href="{{ route('products.edit', $product->id) }}" class="text-indigo-600 hover:underline text-sm">Edit</a>
+                                <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline-block ml-2" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:underline text-sm">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
                     <tr>
-                        <td class="px-4 py-2">{{ $product->name }}</td>
-                        <td class="px-4 py-2">{{ $product->description ?? '-' }}</td>
-                        <td class="px-4 py-2">{{ $product->stock }}</td>
-                        <td class="px-4 py-2">Rp{{ number_format($product->price, 0, ',', '.') }}</td>
-                        <td class="px-4 py-2">
-                            <a href="{{ route('products.edit', $product->id) }}" class="text-indigo-600 hover:underline text-sm">Edit</a>
-                            <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline-block ml-2">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('Yakin ingin menghapus?')" class="text-red-600 hover:underline text-sm">
-                                    Hapus
-                                </button>
-                            </form>
+                        <td colspan="5" class="px-4 py-4 text-center text-gray-500">
+                            Tidak ada data produk.
                         </td>
                     </tr>
-                @endforeach
+                @endif
             </tbody>
         </table>
     </div>
